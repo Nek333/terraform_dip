@@ -1,0 +1,71 @@
+# Конфигурационный файл для серверов с ролью "Worker"
+# Выполнить обновление всех пакетов
+# и установить git, python3-pip
+# -------------------------------------------------
+package_update: true
+package_upgrade: true
+packages:
+  - git
+  - python3-pip
+
+# Настройка и запуск Ansible
+# ---------------------------------
+# Установка Ansible с помощью pip.
+# Клонирвоание репозитория https://gitlab.com/skillfactory-devops/sf-diploma-ansible.git.
+# 1. k8s-dependencies.yml: Плейбук для установки зависимостей Kubernetes на все ноды.
+# 2. k8s-control-plane.yml: Плейбук для инициализации control plane ноды.
+# 3. k8s-workers.yml: Плейбук для присоединения worker нод к кластеру.
+# -------------------------------------------------
+ansible:
+  install_method: pip
+  package_name: ansible
+  run_user: ansible
+  galaxy:
+    actions:
+      - ["ansible-galaxy", "collection", "install", "community.general"]
+
+  setup_controller:
+    repositories:
+      - path: /home/ansible/sf-diploma/
+        source: git@gitlab.com:skillfactory-devops/sf-diploma-ansible.git
+    run_ansible:
+      - playbook_dir: /home/ansible/sf-diploma
+        playbook_name: k8s-dependencies.yml
+        timeout: 600
+        forks: 1
+        private_key: /home/ansible/.ssh/id_ed25519
+        inventory: new_ansible_hosts
+      - playbook_dir: /home/ansible/sf-diploma
+        playbook_name: k8s-control-plane.yml
+        timeout: 600
+        forks: 1
+        private_key: /home/ansible/.ssh/id_ed25519
+        inventory: new_ansible_hosts
+      - playbook_dir: /home/ansible/sf-diploma
+        playbook_name: k8s-workers.yml
+        timeout: 600
+        forks: 1
+        private_key: /home/ansible/.ssh/id_ed25519
+        inventory: new_ansible_hosts
+
+# Запись открытого ключа оператора в "/home/ansible/.ssh/known_hosts".
+# Запись закрытого ключа управления воркерами в "/home/ansible/.ssh/id_ed25519".
+# -------------------------------------------------
+write_files:
+  - path: /home/ansible/.ssh/known_hosts
+    owner: ansible:ansible
+    permissions: 0o600
+    defer: true
+    content: |
+      ssh-ed25519 AAAAC................M+M10V Timofei@Ermolaev.tech
+  - path: /home/ansible/.ssh/id_ed25519
+    owner: ansible:ansible
+    permissions: 0o600
+    defer: true
+    encoding: base64
+    content: |
+      U1NIIFBSSVZBU1NIIFBSSVZBU1NIIFBSSVZBU1NIIFBSSVZBU1NIIFBSSVZBU1NIIFBSSVZBU1NIIFBSSF
+      UU1NIIFBSSVZBU1NIIFBSSVZBU1NIIFBSSVZBU1NIIFBSSVZBU1NIIFBSSVZBU1NIIFBSSVZBU1NIIFBSSF
+      U1NIIFBSSVZBU1NIIFBSSVZBU1NIIFBSSVZBU1NIIFBSSVZBU1NIIFBSSVZBU1NIIFBSSVZBU1NIIFBSSF
+      U1NIIFBSSVZBU1NIIFBSSVZBU1NIIFBSSVZBU1NIIFBSSVZBU1NIIFBSSVZBU1NIIFBSSVZBU1NIIFBSSF
+      U1NIIFBSSVZBU1NIIFBSSVZBU1NIIFBSSVZBU1NIIFBSSVZBU1NIIFBSSVZBU1NIIFBSSVZBU1NIIFBSSF
