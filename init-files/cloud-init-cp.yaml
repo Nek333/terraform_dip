@@ -1,74 +1,13 @@
-# Конфигурационный файл для серверов с ролью "Worker"
-# Выполнить обновление всех пакетов
-# и установить git, python3-pip
-# -------------------------------------------------
-package_update: true
-package_upgrade: true
-packages:
-  - git
-  - python3-pip
+#cloud-config
+ssh_pwauth: false
 
-# Настройка и запуск Ansible
-# ---------------------------------
-# Установка Ansible с помощью pip.
-# Клонирвоание репозитория https://gitlab.com/skillfactory-devops/sf-diploma-ansible.git.
-# 1. k8s-dependencies.yml: Плейбук для установки зависимостей Kubernetes на все ноды.
-# 2. k8s-control-plane.yml: Плейбук для инициализации control plane ноды.
-# 3. k8s-workers.yml: Плейбук для присоединения worker нод к кластеру.
-# -------------------------------------------------
-ansible:
-  install_method: pip
-  package_name: ansible
-  run_user: ansible
-  galaxy:
-    actions:
-      - ["ansible-galaxy", "collection", "install", "community.general"]
-
-  setup_controller:
-    repositories:
-      - path: /home/ansible/sf-diploma/
-        source: git@gitlab.com:skillfactory-devops/sf-diploma-ansible.git
-    run_ansible:
-      - playbook_dir: /home/ansible/sf-diploma
-        playbook_name: k8s-dependencies.yml
-        timeout: 600
-        forks: 1
-        private_key: /home/ansible/.ssh/id_ed25519
-        inventory: new_ansible_hosts
-      - playbook_dir: /home/ansible/sf-diploma
-        playbook_name: k8s-control-plane.yml
-        timeout: 600
-        forks: 1
-        private_key: /home/ansible/.ssh/id_ed25519
-        inventory: new_ansible_hosts
-      - playbook_dir: /home/ansible/sf-diploma
-        playbook_name: k8s-workers.yml
-        timeout: 600
-        forks: 1
-        private_key: /home/ansible/.ssh/id_ed25519
-        inventory: new_ansible_hosts
-
-# Запись открытого ключа оператора в "/home/ansible/.ssh/known_hosts".
-# Запись закрытого ключа управления воркерами в "/home/ansible/.ssh/id_ed25519".
-# -------------------------------------------------
-write_files:
-  - path: /home/ansible/.ssh/known_hosts
-    owner: ansible:ansible
-    permissions: 0o600
-    defer: true
-    content: |
-      ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBut7pkmBr5pWgoSB1aUcEdDo9XoYPQmolKgv1M+M10V Timofei@Ermolaev.tech
-  - path: /home/ansible/.ssh/id_ed25519
-    owner: ansible:ansible
-    permissions: 0o600
-    defer: true
-    encoding: base64
-    content: |
-      LS0tLS1CRUdJTiBPUEVOU1NIIFBSSVZBVEUgS0VZLS0tLS0KYjNCbGJuTnphQzFyWlhrdGRqRUFBQ
-      UFBQkc1dmJtVUFBQUFFYm05dVpRQUFBQUFBQUFBQkFBQUFNd0FBQUF0emMyZ3RaVwpReU5UVXhPUU
-      FBQUNCUi9ZYWhoYlA5WVNEYzJsS0o5SzA2bmc0NzJIOEtqa2lKSlE4VU14QzJDZ0FBQUtpTFFBMmJ
-      pMEFOCm13QUFBQXR6YzJndFpXUXlOVFV4T1FBQUFDQlIvWWFoaGJQOVlTRGMybEtKOUswNm5nNDcy
-      SDhLamtpSkpROFVNeEMyQ2cKQUFBRUR3WVZNb3VTM1YrYlFzLytKQmpQam41eU5VdUkyeTM3dG8zW
-      FBmUzNVYk5GSDlocUdGcy8xaElOemFVb24wclRxZQpEanZZZndxT1NJa2xEeFF6RUxZS0FBQUFIbV
-      JsZG05d2MxOWthWEJzYjIxaFFITnJhV3hzWm1GamRHOXllUzV5ZFFFQ0F3ClFGQmdjPQotLS0tLUV
-      ORCBPUEVOU1NIIFBSSVZBVEUgS0VZLS0tLS0K
+users:
+- name: ansible
+  gecos: Ansible User
+  groups: users,admin,wheel
+  sudo: ALL=(ALL) NOPASSWD:ALL
+  shell: /bin/bash
+  lock_passwd: true
+  ssh_authorized_keys:
+    - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFH9hqGFs/1hINzaUon0rTqeDjvYfwqOSIklDxQzELYK devops_diploma@skillfactory.ru"
+  no_ssh_fingerprints: true

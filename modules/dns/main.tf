@@ -28,3 +28,11 @@ resource "yandex_dns_recordset" "vm_dns" {
   ttl     = 300
   data    = [each.value]
   }
+
+resource "yandex_dns_recordset" "web_dns" {
+  zone_id = yandex_dns_zone.zone1.id
+  name    = "web"
+  type    = "CNAME"
+  ttl     = 300
+  data    = ["sf-diploma-cp-0.skillfactory-ermolaev.ru"]
+  }
