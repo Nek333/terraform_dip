@@ -19,12 +19,27 @@ module "network" {
   cidr_block   = "10.0.0.0/24"
 }
 
+module "load_balancer" {
+  source              = "./modules/load_balancer"
+  target_group_name   = "sf-target-group"
+  region_id           = "ru-central1"
+  targets             = [for ip in module.instances.worker_internal_ips : {
+                              subnet_id = module.network.subnet_id
+                              address   = ip
+                          }]
+  load_balancer_name  = "sf-load-balancer"
+  listener_port       = 8080
+  health_check_port   = 3003
+  health_check_path   = "/ping"
+  depends_on          = [module.instances, module.network]
+}
+
 module "instances" {
   source                 = "./modules/instances"
   subnet_id              = module.network.subnet_id
   zone                   = "ru-central1-b"
   image_family           = "ubuntu-2004-lts"
-  worker_instance_count  = 3
+  worker_instance_count  = 2
   cp_instance_count      = 1
   srv_instance_count     = 1
   worker_instance_name   = "sf-dip-worker"
@@ -49,4 +64,5 @@ module "dns" {
   dns_name              = "skillfactory-ermolaev.ru."
   dns_zone_name         = "skillfactory-ermolaev-ru"
   dns_zone_description  = "skillfactory-ermolaev-ru"
+  depends_on = [module.instances, module.network]
 }
