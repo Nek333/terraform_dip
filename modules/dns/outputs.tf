@@ -1,7 +1,13 @@
 # ID созданной DNS зоны в Yandex Cloud.
-output "dns_zone_id" {
-  description = "ID созданной DNS зоны в Yandex Cloud"
-  value       = yandex_dns_zone.zone1.id
+output "dns_internal_zone_id" {
+  description = "ID созданной внешней DNS зоны в Yandex Cloud"
+  value       = yandex_dns_zone.external_zone.id
+}
+
+# ID созданной DNS зоны в Yandex Cloud.
+output "dns_external_zone_id" {
+  description = "ID созданной внутренней DNS зоны в Yandex Cloud"
+  value       = yandex_dns_zone.internal_zone.id
 }
 
 # Полные доменные имена (FQDN) созданных записей для инстансов.

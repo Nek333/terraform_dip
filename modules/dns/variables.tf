@@ -33,3 +33,9 @@ variable "dns_zone_description" {
   description = "Описание DNS зоны"
   type        = string
 }
+
+# Адрес урпавляющего сервера.
+variable "srv_fqdn" {
+  description = "Описание DNS зоны"
+  type        = list(string)
+}

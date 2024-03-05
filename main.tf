@@ -59,10 +59,11 @@ module "instances" {
 module "dns" {
   source                = "./modules/dns"
   private_networks      = [module.network.network_id]
-  instance_ips          = concat(module.instances.worker_external_ips, module.instances.cp_external_ips, module.instances.srv_external_ips)
+  instance_ips          = concat(module.instances.worker_internal_ips, module.instances.cp_internal_ips, module.instances.srv_internal_ips)
   instance_names        = concat(module.instances.worker_external_names, module.instances.cp_external_names, module.instances.srv_external_names)
   dns_name              = "skillfactory-ermolaev.ru."
   dns_zone_name         = "skillfactory-ermolaev-ru"
+  srv_fqdn              = module.instances.srv_external_ips
   dns_zone_description  = "skillfactory-ermolaev-ru"
   depends_on = [module.instances, module.network]
 }
