@@ -81,6 +81,12 @@ variable "cp_memory" {
   type        = number
 }
 
+# Размер примонтирвоанного диска (в ГБ).
+variable "disk-size" {
+  description = "Size of the boot disk in GB"
+  type        = string
+}
+
 ##Создание сервера управления
 # Количество инстансов control_pane, которые будут созданы.
 variable "srv_instance_count" {

@@ -1,1 +1,0 @@
-{"Modules":[{"Key":"","Source":"","Dir":"."},{"Key":"dns","Source":"./modules/dns","Dir":"modules/dns"},{"Key":"instances","Source":"./modules/instances","Dir":"modules/instances"},{"Key":"load_balancer","Source":"./modules/load_balancer","Dir":"modules/load_balancer"},{"Key":"network","Source":"./modules/network","Dir":"modules/network"}]}

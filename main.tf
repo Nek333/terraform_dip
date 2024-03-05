@@ -51,6 +51,7 @@ module "instances" {
   worker_memory          = 2
   cp_memory              = 2
   srv_memory             = 4
+  disk-size              = 10
   worker_cloud-init_path = "init-files/cloud-init-worker.yaml"
   cp_cloud-init_path     = "init-files/cloud-init-cp.yaml"
   srv_cloud-init_path    = "init-files/cloud-init-srv.yaml"
