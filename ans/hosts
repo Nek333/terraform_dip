@@ -1,8 +1,0 @@
-[srv]
-srv ansible_host=130.193.43.176 ansible_ssh_private_key_file=/home/nek33/.ssh/id_ed25519 ansible_user=ansible
-
-[workers]
-worker ansible_host=158.160.18.138 ansible_ssh_private_key_file=/home/nek33/.ssh/id_ed25519 ansible_user=ansible
-
-[control_plane]
-cp ansible_host=158.160.29.215 ansible_ssh_private_key_file=/home/nek33/.ssh/id_ed25519 ansible_user=ansible
